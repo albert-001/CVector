@@ -16,9 +16,9 @@ typedef struct {
 Vector* createVector(int capacity);
 void freeVector(Vector* v);
 void vector_add(Vector* v, V_ELEM_TYPE value);
-int vector_get(Vector* v, int index);
+V_ELEM_TYPE vector_get(Vector* v, int index);
 void vector_remove(Vector* v, int index);
-int* getElementsByIndex(Vector* v, int* indices, int numIndices);
+V_ELEM_TYPE* getElementsByIndex(Vector* v, int* indices, int numIndices);
 void deleteElementsByIndex(Vector* v, int* indices, int numIndices);
 int size(Vector* v);
 int capacity(Vector* v);

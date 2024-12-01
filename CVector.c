@@ -113,8 +113,8 @@ V_ELEM_TYPE* data(Vector* v) {
     return v->data;
 }
 
-int* getElementsByIndex(Vector* v, int* indices, int numIndices) {
-    int* elements = (int*)malloc(numIndices * sizeof(V_ELEM_TYPE));
+V_ELEM_TYPE* getElementsByIndex(Vector* v, int* indices, int numIndices) {
+    V_ELEM_TYPE* elements = (int*)malloc(numIndices * sizeof(V_ELEM_TYPE));
     int count = 0;
     int elementIndex = 0;
     for (int i = 0; i <= v->maxUsedIndex; i++) {
@@ -165,11 +165,11 @@ void vector_remove(Vector* v, int index) {
     deleteElementsByIndex(v, indices, 1);
 }
 
-int vector_get(Vector* v, int index) {
+V_ELEM_TYPE vector_get(Vector* v, int index) {
     int indices[1] = {index};
-    int* elements = getElementsByIndex(v, indices, 1);
+    V_ELEM_TYPE* elements = getElementsByIndex(v, indices, 1);
     assert(elements != NULL);
-    int r = elements[0];
+    V_ELEM_TYPE r = elements[0];
     free(elements);
     return r;
 }
