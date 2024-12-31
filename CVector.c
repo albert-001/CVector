@@ -44,16 +44,23 @@ static void pushBack(Vector* v, V_ELEM_TYPE value) {
     if (v->size == v->capacity) {
         // Double the capacity if full
         v->capacity *= 2;
-        v->data = (int*)realloc(v->data, v->capacity * sizeof(V_ELEM_TYPE));
-        if (v->data == NULL) {
-            printf("Failed to allocate memory for data\n");
+        int* pdata = (int*)realloc(v->data, v->capacity * sizeof(V_ELEM_TYPE));
+        char* pbitmap = (char*)realloc(v->bitmap, (v->capacity / 8 + 1));
+        if (pdata && pbitmap) {
+            v->data = pdata;
+            v->bitmap = pbitmap;
+        } else {
             v->capacity /= 2;
-            return;
-        }
-        v->bitmap = (char*)realloc(v->bitmap, (v->capacity / 8 + 1));
-        if (v->bitmap == NULL) {
-            printf("Failed to allocate memory for bitmap\n");
-            v->capacity /= 2;
+            if (pdata) {
+                free(pdata);
+            } else {
+                printf("Failed to realloc memory for data \n");
+            }
+            if (pbitmap) {
+                free(pbitmap);
+            } else {
+                printf("Failed to realloc memory for bitmap \n");
+            }
             return;
         }
         memset(v->bitmap + (v->capacity / 2 + 7)/8, 0, ((v->capacity + 7)/8 - (v->capacity/2 + 7)/8));
@@ -115,6 +122,10 @@ V_ELEM_TYPE* data(Vector* v) {
 
 V_ELEM_TYPE* getElementsByIndex(Vector* v, int* indices, int numIndices) {
     V_ELEM_TYPE* elements = (int*)malloc(numIndices * sizeof(V_ELEM_TYPE));
+    if (elements == NULL) {
+        printf("Failed to allocate memory for elements \n");
+        return NULL;
+    }
     int count = 0;
     int elementIndex = 0;
     for (int i = 0; i <= v->maxUsedIndex; i++) {
@@ -127,11 +138,16 @@ V_ELEM_TYPE* getElementsByIndex(Vector* v, int* indices, int numIndices) {
             count++;
         }
     }
-    return NULL; // not enough elements
+    printf("No enough elements \n");
+    free(elements);
+    return NULL;
 }
 
 void deleteElementsByIndex(Vector* v, int* indices, int numIndices) {
-    assert(numIndices <= v->size);
+    if(numIndices > v->size) {
+        printf("Error: Number of indices exceeds vector size \n");
+        return;
+    };
     int actualIndex = 0;
     int elementIndex = 0;
     for (int i = 0; i <= v->maxUsedIndex; i++) {
@@ -166,6 +182,7 @@ void vector_remove(Vector* v, int index) {
 }
 
 V_ELEM_TYPE vector_get(Vector* v, int index) {
+    assert(index >= 0 && index < size(v));
     int indices[1] = {index};
     V_ELEM_TYPE* elements = getElementsByIndex(v, indices, 1);
     assert(elements != NULL);

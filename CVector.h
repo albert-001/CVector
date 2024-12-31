@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MEM_COMPACT_THREASHOLD (0.4)
 
 typedef int V_ELEM_TYPE;
@@ -23,3 +27,8 @@ void deleteElementsByIndex(Vector* v, int* indices, int numIndices);
 int size(Vector* v);
 int capacity(Vector* v);
 V_ELEM_TYPE* data(Vector* v);
+
+
+#ifdef __cplusplus
+}
+#endif
